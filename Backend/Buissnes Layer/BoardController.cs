@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
@@ -312,7 +312,8 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
                         if (UserHasThisBoard(email, boardName))
                         {
                             Board b = GetBoard(email, boardName);
-                            b.AddTask(title, description, dueDate, email);
+                            int ID = boardDTOMapper.getNumberOfTasks() + 1;
+                            b.AddTask(title, description, dueDate, email, ID);
                             String msg = String.Format("task added Successfully! to board :{0}", boardName);
                             log.Info(msg);
                         }
@@ -374,8 +375,8 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
                         if (GetBoard(email, boardName).GetTask(taskId).GetState() == columnOrdinal)
                         {
                             Board b = GetBoard(email, boardName);
-                            if (b.GetTask(taskId).Assignee == email)
-                            {
+                            //if (b.GetTask(taskId).Assignee == email)
+                            //{
                                 try
                                 {
                                     b.ChangeState(taskId, email);
@@ -388,12 +389,11 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
                                     throw new Exception(e.Message);
                                 }
                             }
-                            else
-                            {
-                                log.Warn("ONLY ASSIGNEE OF THE TASK CAN CHANGE ITS STATE");
-                                throw new ArgumentException("ONLY ASSIGNEE OF THE TASK CAN CHANGE ITS STATE");
-                            }
-                        }
+                            //else
+                            //{
+                            //    log.Warn("ONLY ASSIGNEE OF THE TASK CAN CHANGE ITS STATE");
+                            //    throw new ArgumentException("ONLY ASSIGNEE OF THE TASK CAN CHANGE ITS STATE");
+                            //}
                         else
                         {
                             log.Warn("task does not at columnOrdinal given");
