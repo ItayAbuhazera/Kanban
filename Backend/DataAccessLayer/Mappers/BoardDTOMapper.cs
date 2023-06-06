@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -52,7 +52,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
         internal void AddUserToBoard(int boardID, string email)
         {
             this.boardUsersMapper.AddUserToBoard(boardID, email);
-            
+
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
         {
             string path = Path.GetFullPath(Path.Combine(
                 Directory.GetCurrentDirectory(), "kanban.db"));
-            SQLiteConnectionStringBuilder builder = new(){DataSource = path};
+            SQLiteConnectionStringBuilder builder = new() { DataSource = path };
             // string connectionString = $"Data Source={path}; Version=3;";
 
             using (SQLiteConnection connection = new SQLiteConnection(builder.ConnectionString))
@@ -182,7 +182,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
 
                         command.Prepare();
                         res = command.ExecuteNonQuery();
-                        boardDTOs.RemoveAll(x => x.Owner == ownerEmail && x.Name == boardName && x.ID==boardID);
+                        boardDTOs.RemoveAll(x => x.Owner == ownerEmail && x.Name == boardName && x.ID == boardID);
                         boardUsersMapper.DeleteBoard(boardID);
                         String msg = String.Format("DeleteBoard Successfully in BoardDTOM!!");
                         log.Info(msg);
@@ -401,7 +401,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
         {
             string path = Path.GetFullPath(Path.Combine(
                 Directory.GetCurrentDirectory(), "kanban.db"));
-            SQLiteConnectionStringBuilder builder = new() { DataSource = path }; 
+            SQLiteConnectionStringBuilder builder = new() { DataSource = path };
             //string connectionString = $"Data Source={path}; Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(builder.ConnectionString))
             {
@@ -424,7 +424,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
                     }
                     boardDTOs.Clear();
                     Console.WriteLine($"SQL execution finished without errors. Result: {res} rows changed(deleted)");
-                     String msg = String.Format("DeleteAllData Successfully in BoardDTOM!!");
+                    String msg = String.Format("DeleteAllData Successfully in BoardDTOM!!");
                     log.Info(msg);
                 }
                 catch (SQLiteException ex)
@@ -442,7 +442,46 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.Mappers
                 }
             }
         }
-
-        
+        ///<summary>
+        ///This function should make a query and return the number of tasks so we don't use the same ID twice
+        ///</summary>
+        ///<returns>The number of tasks</returns>
+        public int getNumberOfTasks()
+        {
+            int count;
+            string path = Path.GetFullPath(Path.Combine(
+                Directory.GetCurrentDirectory(), "kanban.db"));
+            SQLiteConnectionStringBuilder builder = new() { DataSource = path };
+            using (SQLiteConnection connection = new SQLiteConnection(builder.ConnectionString))
+            {
+                SQLiteCommand command = new SQLiteCommand(null, connection);
+                try
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT COUNT(*) FROM {TasksTable};";
+                    command.Prepare();
+                    count = Convert.ToInt32(command.ExecuteScalar());
+                    Console.WriteLine($"Number of tasks: {count}");
+                    String msg = String.Format("getNumberOfTasks Successfully in BoardDTOM!!");
+                    log.Info(msg);
+                }
+                catch (SQLiteException ex)
+                {
+                    Console.WriteLine(command.CommandText);
+                    Console.WriteLine(ex.Message);
+                    log.Warn(ex.Message);
+                    throw new DALException($"Error retrieving the number of tasks: " + ex.Message);
+                    // log error
+                }
+                finally
+                {
+                    command.Dispose();
+                    connection.Close();
+                }
+            }
+            return count;
+        }
     }
-}
+    } 
+
+
