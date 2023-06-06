@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -79,6 +79,11 @@ namespace Frontend.View
         private void UserBoards_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+        private void BoardNameText_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // Clear the text when the TextBox is touched
+            BoardNameText.Text = "";
         }
     }
 }
