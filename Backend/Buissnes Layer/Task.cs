@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
         [JsonIgnore]
         private int State;
         [JsonIgnore]
-        private static int ID = 0;
+        private static int _ID = 10;
         public int BoardId;
         private TaskDTOMapper taskDTOMapper;
 
@@ -44,14 +44,14 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
         private const int Done = 2;
         public Task (string title, DateTime dueDate, int boardId, string description = "", string assignee = "Unassinged")
         {
-            this.Id = ID;
+            this.Id = _ID;
             this.CreationTime = DateTime.Today;
             this.Title = title;
             this.Description = description;
             this.DueDate = dueDate;
             this.State = 0;
             this.Assignee = assignee;
-            ID += 1;
+            _ID += 1;
             if (dueDate <= CreationTime)
             {
                 throw ex;
@@ -80,7 +80,27 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
             this.State = taskDto.GetState();
             this.taskDTOMapper = new TaskDTOMapper(); // bad?
         }
-        
+        public Task(string title, DateTime dueDate, int boardId, string description = "", int ID = 100, string assignee = "Unassinged")
+        {
+            this.Id = ID;
+            this.CreationTime = DateTime.Today;
+            this.Title = title;
+            this.Description = description;
+            this.DueDate = dueDate;
+            this.State = 0;
+            this.Assignee = assignee;
+            if (dueDate <= CreationTime)
+            {
+                throw ex;
+            }
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+            log.Info("Starting log!");
+            BoardId = boardId;
+            this.taskDTOMapper = new TaskDTOMapper();
+            // Do NOT Load Data!
+
+        }
 
 
         /// <summary>
@@ -238,7 +258,11 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
         // generate ToString
         public override string ToString()
         {
-            return "Title: " + this.Title + " Description: " + this.Description + " Due Date: " + this.DueDate + " Assignee: " + this.Assignee;
+            return "Title: " + this.Title + " Description: " + this.Description + " Due Date: " + this.DueDate + " Assignee: " + this.Assignee + " ID: " + this.Id;
+        }
+        public int GetId()
+        {
+            return this.Id;
         }
     }
 }
