@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -329,7 +329,7 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
         /// <param name="description">Description of the new task</param>
         /// <param name="dueDate">The due date if the new task</param>
         /// <returns>void, unless an error occurs </returns>
-        public void AddTask(string title, string description, DateTime dueDate ,string userEmail)
+        public void AddTask(string title, string description, DateTime dueDate, string userEmail, int ID)
         {
             try
             {
@@ -337,7 +337,7 @@ namespace IntroSE.Kanban.Backend.Buissnes_Layer
                 {
                     try
                     {
-                        Task newTask = new Task(title, dueDate, this.BoardId, description);
+                        Task newTask = new Task(title, dueDate, this.BoardId, description, ID);
                         SetTasks(newTask);
                         String msg = String.Format("set new task Successfully in BuissnesLayer! ");
                         log.Info(msg);
